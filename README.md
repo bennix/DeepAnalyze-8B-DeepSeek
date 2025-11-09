@@ -31,6 +31,8 @@
 
 <p align="center" width="100%">
   <video src="./Video.mp4" controls muted style="width: 70%; min-width: 300px; display: block; margin: auto;"></video>
+  <br/>
+  <a href="./Video.mp4">如果无法播放，点击此处下载或直接浏览器打开 Video.mp4</a>
 </p>
 
 
