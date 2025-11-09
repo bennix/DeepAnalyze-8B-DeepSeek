@@ -28,6 +28,33 @@
 </p>
 
 
+> [!NOTE]
+> 改编说明：本仓库在原始版本基础上进行了改编与增强，以便更便捷地在本地与远程环境中体验和部署。原始项目与模型来源如下：
+> - 原始代码仓库：[`ruc-datalab/DeepAnalyze`](https://github.com/ruc-datalab/DeepAnalyze)
+> - 开源模型：[`RUC-DataLab/DeepAnalyze-8B`](https://huggingface.co/RUC-DataLab/DeepAnalyze-8B)
+>
+> 兼容性：已在 macOS Apple Silicon（M1/M2/M3）上验证可用，支持无需 GPU 的本地快速体验（Mock OpenAI API）以及连接远程推理服务。下方提供简易使用步骤与 Mac 专用指南。
+
+## 🍎 Mac (Apple Silicon) 使用指南
+
+- 环境建议：`macOS 14+`，Apple Silicon（M1/M2/M3），`Python 3.12`，`Node.js`（npm 或 pnpm）。
+- 快速体验（无需 GPU，本地 Mock OpenAI API）：
+  ```bash
+  cd demo/chat
+  npm install
+  cd ..
+  bash start.sh
+  # 浏览器访问
+  open http://localhost:4000
+  ```
+- 连接远程模型（OpenAI/兼容服务或自建 vLLM）：
+  - 前端：编辑 `demo/chat/lib/config.ts`，设置 `AI_API_BASE_URL`、`WEBSOCKET_URL`。
+  - 后端：编辑 `demo/backend.py`，设置 `MODEL_PATH` 与 `API_BASE`。
+  - 建议在 Mac 上将推理托管于远程 GPU，本机用于 UI 与业务逻辑。
+- 本地推理（仅 CPU/MPS）：
+  - 如需纯本地推理，可使用 CPU 模式或连接远程 vLLM。当前 vLLM 在 macOS/MPS 上支持有限，建议远程部署以获得更佳性能。
+- 多语言：前后端已支持中英文自动切换（随系统/浏览器语言），无需额外设置。
+
 ## 🔥 News
 - **[2025.11.08]**: DeepAnalyze is now accessible through the JupyterUI, building based on [jupyter-mcp-server](https://github.com/datalayer/jupyter-mcp-server). Thanks to the contributor [@ChengJiale150](https://github.com/ChengJiale150).
 - **[2025.10.28]**: We welcome all contributions, including improving the DeepAnalyze and sharing use cases (see [`CONTRIBUTION.md`](CONTRIBUTION.md)). All merged PRs will be listed as contributors.
