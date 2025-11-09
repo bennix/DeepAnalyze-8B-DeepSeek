@@ -276,15 +276,3 @@ If this repository is useful for you, please cite as:
 ```
 
 If you have any questions, please feel free to submit an issue or contact `zhangshaolei98@ruc.edu.cn`.
-
-## 🌟 Misc
-
-Welcome to join the [DeepAnalyze WeChat group](./assets/wechat.jpg), chat and share ideas with others!
-
-<p align="left" width="100%">
-<img src="./assets/wechat.jpg" alt="DeepAnalyze" style="width: 30%; min-width: 300px; display: block; margin: auto;">
-</p>
-
-If you like DeepAnalyze, give it a GitHub Star ⭐. 
-
-[![Star History Chart](https://api.star-history.com/svg?repos=ruc-datalab/DeepAnalyze&type=date&legend=top-left)](https://www.star-history.com/#ruc-datalab/DeepAnalyze&type=date&legend=top-left)
