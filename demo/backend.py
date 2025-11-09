@@ -1120,7 +1120,7 @@ def bot_stream(messages, workspace, session_id="default", language: str = "zh"):
             )
             cur_res = ""
             last_finish_reason = None
-                for rchunk in response:
+            for rchunk in response:
                 if rchunk.choices:
                     if getattr(rchunk.choices[0], "delta", None):
                         delta = rchunk.choices[0].delta.content
