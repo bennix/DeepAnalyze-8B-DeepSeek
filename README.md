@@ -27,6 +27,12 @@
 <img src="./assets/deepanalyze.jpg" alt="deepanalyze" style="width: 70%; min-width: 300px; display: block; margin: auto;">
 </p>
 
+## 🎬 Demo Video
+
+<p align="center" width="100%">
+  <video src="./Video.mp4" controls muted style="width: 70%; min-width: 300px; display: block; margin: auto;"></video>
+</p>
+
 
 > [!NOTE]
 > 改编说明：本仓库在原始版本基础上进行了改编与增强，以便更便捷地在本地与远程环境中体验和部署。原始项目与模型来源如下：
