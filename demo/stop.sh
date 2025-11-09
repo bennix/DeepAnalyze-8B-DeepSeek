@@ -32,6 +32,7 @@ stop_service() {
 # Stop services
 stop_service "Backend API" "logs/backend.pid"
 stop_service "React Frontend" "logs/frontend.pid"
+stop_service "Mock OpenAI API" "logs/mock.pid"
 
 echo ""
 echo "Cleaning up remaining processes..."

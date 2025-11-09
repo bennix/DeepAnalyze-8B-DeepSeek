@@ -33,9 +33,21 @@ check_port $FRONTEND_PORT
 echo "Cleanup completed."
 echo ""
 
+# Start Mock OpenAI API on port 8000
+echo "Starting Mock OpenAI API (port 8000)..."
+if [ -f "../.venv/bin/activate" ]; then
+    source ../.venv/bin/activate
+fi
+nohup python jupyter/test/mock_server.py > logs/mock.log 2>&1 &
+MOCK_PID=$!
+echo "Mock API PID: $MOCK_PID"
+
 # Start backend API (ports 8200, 8100)
 echo "Starting backend API..."
-nohup python3 backend.py > logs/backend.log 2>&1 &
+if [ -f "../.venv/bin/activate" ]; then
+    source ../.venv/bin/activate
+fi
+nohup python backend.py > logs/backend.log 2>&1 &
 BACKEND_PID=$!
 echo "Backend PID: $BACKEND_PID"
 echo "API running on: http://localhost:8200"
@@ -57,6 +69,7 @@ echo "Frontend running on: http://localhost:$FRONTEND_PORT"
 # Save PIDs
 echo $BACKEND_PID > logs/backend.pid
 echo $FRONTEND_PID > logs/frontend.pid
+echo $MOCK_PID > logs/mock.pid
 
 echo ""
 echo "All services started successfully."

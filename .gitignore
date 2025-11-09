@@ -19,3 +19,22 @@ wheels/
 .cursor/
 .vscode/
 .trae/
+
+# Node / Next.js
+**/node_modules/
+**/.next/
+**/.turbo/
+**/out/
+**/.pnpm-store/
+
+# Local env files
+**/.env.local
+**/.env.*.local
+
+# Logs and workspaces
+logs/
+demo/logs/
+demo/workspace/
+demo/logs/*.pid
+demo/*.pid
+logs/*.pid

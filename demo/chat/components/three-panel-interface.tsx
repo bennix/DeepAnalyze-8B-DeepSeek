@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { API_URLS, API_CONFIG } from "@/lib/config";
+import { t, getLocale } from "@/lib/i18n";
 import {
   Dialog,
   DialogContent,
@@ -318,7 +319,7 @@ export function ThreePanelInterface() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome-1",
-      content: "Hello! I'm DeepAnalyze-8B, your autonomous data science assistant. Upload your data and let's explore it together!",
+      content: t("welcome"),
       sender: "ai",
       timestamp: new Date(),
       localOnly: true,
@@ -488,7 +489,7 @@ export function ThreePanelInterface() {
     }
     const welcome: Message = {
       id: `welcome-${Date.now()}`,
-      content: "Hello! I'm DeepAnalyze-8B, your autonomous data science assistant. Upload your data and let's explore it together!",
+      content: t("welcome"),
       sender: "ai",
       timestamp: new Date(),
       localOnly: true,
@@ -499,7 +500,60 @@ export function ThreePanelInterface() {
         localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify([welcome]));
       }
     } catch {}
-    toast({ description: "已清空聊天" });
+    toast({ description: t("cleared") });
+  };
+
+  // 导出所有对话为 Markdown 文件
+  const exportChatMarkdown = async () => {
+    try {
+      if (isTyping) {
+        toast({ description: "执行中，暂时无法导出", variant: "destructive" });
+        return;
+      }
+      const now = new Date();
+      const title = `对话记录 - ${now.toLocaleString()}`;
+      const lines: string[] = [`# ${title}`, ""];
+      for (const m of messages) {
+        const ts = m.timestamp instanceof Date
+          ? m.timestamp.toLocaleString()
+          : new Date(m.timestamp as any).toLocaleString();
+        const who = m.sender === "user" ? "用户" : "AI";
+        lines.push(`## ${who} [${ts}]`);
+        lines.push("");
+        // 保留原始 Markdown/代码块
+        lines.push(m.content || "");
+        // 附件列表（如有）
+        if (m.attachments && m.attachments.length) {
+          lines.push("");
+          lines.push("附件:");
+          for (const a of m.attachments) {
+            const sizeStr = typeof a.size === "number" ? `${a.size}B` : "";
+            lines.push(`- [${a.name}](${a.url}) ${sizeStr}`);
+          }
+        }
+        lines.push("");
+      }
+      const md = lines.join("\n");
+      const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const fname = `chat-${sessionId || "default"}-${
+        now
+          .toISOString()
+          .replace(/[:]/g, "-")
+          .replace(/\..*/, "")
+      }.md`;
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fname;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast({ description: `已导出聊天为 Markdown: ${fname}` });
+    } catch (e) {
+      console.error("export chat markdown error", e);
+      toast({ description: "导出失败", variant: "destructive" });
+    }
   };
 
   useEffect(() => {
@@ -2142,6 +2196,7 @@ export function ThreePanelInterface() {
         },
         body: JSON.stringify({
           model: "grok-beta",
+          language: getLocale(),
           messages: [
             ...messages
               .filter((m) => !m.localOnly)
@@ -2362,7 +2417,7 @@ export function ThreePanelInterface() {
       >
         <ResizablePanelGroup direction="horizontal" className="h-full">
           {/* Left Panel - Workspace Tree */}
-          <ResizablePanel defaultSize={25} minSize={15}>
+          <ResizablePanel defaultSize={20} minSize={15}>
             <div className="flex flex-col min-h-0 min-w-0 h-full">
               <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 h-12">
                 <h2 className="text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -2503,10 +2558,8 @@ export function ThreePanelInterface() {
             </div>
           </ResizablePanel>
 
-          <ResizableHandle withHandle />
-
           {/* Middle Panel - Chat & Analysis */}
-          <ResizablePanel defaultSize={40} minSize={25}>
+          <ResizablePanel defaultSize={showCodeEditor ? 45 : 80} minSize={25}>
             <div className="flex flex-col min-h-0 min-w-0 h-full">
               {/* Header */}
               <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 h-12 shrink-0">
@@ -2876,6 +2929,17 @@ export function ThreePanelInterface() {
                     />
                   </div>
                   {/* 将清空按钮移动到发送按钮旁边 */}
+                  {/* 导出聊天为 Markdown */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    title="导出对话为 Markdown"
+                    className="h-9 px-2"
+                    onClick={exportChatMarkdown}
+                    disabled={isTyping}
+                  >
+                    <Download className="h-4 w-4" />
+                  </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -2930,58 +2994,41 @@ export function ThreePanelInterface() {
             </div>
           </ResizablePanel>
 
-          <ResizableHandle withHandle />
-
-          {/* Right Panel - Code Editor */}
-          <ResizablePanel defaultSize={35} minSize={20}>
-            <div className="flex flex-col bg-gray-50 dark:bg-gray-900 min-h-0 h-full">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 h-12 shrink-0">
-                <h2 className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Code
-                </h2>
-                {showCodeEditor && (
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setShowCodeEditor(false);
-                        setCodeEditorContent("");
-                        setSelectedCodeSection("");
-                      }}
-                      className="h-6 px-2 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                    >
-                      Close
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={executeCode}
-                      disabled={!codeEditorContent || isExecutingCode}
-                      className="h-6 px-3 text-xs bg-black text-white dark:bg-white dark:text-black"
-                    >
-                      {isExecutingCode ? "Running..." : "Run"}
-                    </Button>
-                  </div>
-                )}
-              </div>
-
-              {!showCodeEditor ? (
-                <div className="flex-1 flex items-center justify-center text-gray-400">
-                  <div className="text-center select-none">
-                    <p className="text-sm">Click a code block to edit</p>
-                  </div>
-                </div>
-              ) : (
+          {/* Right Panel - Code Editor (only show when editor is open) */}
+          {showCodeEditor && (
+            <>
+              <ResizableHandle withHandle />
+              <ResizablePanel defaultSize={35} minSize={20}>
                 <div className="flex-1 min-h-0 flex flex-col p-4 editor-container overflow-hidden">
                   {/* Code Editor */}
                   <div
                     className="min-h-0 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-black flex flex-col"
                     style={{ height: `${editorHeight}%` }}
                   >
-                    <div className="bg-gray-50 dark:bg-gray-800 px-3 py-2 border-b border-gray-200 dark:border-gray-700 shrink-0">
-                      <span className="text-xs text-gray-500 font-mono">
-                        python
-                      </span>
+                    <div className="bg-gray-50 dark:bg-gray-800 px-3 py-2 border-b border-gray-200 dark:border-gray-700 shrink-0 flex items-center justify-between">
+                      <span className="text-xs text-gray-500 font-mono">python</span>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setShowCodeEditor(false);
+                            setCodeEditorContent("");
+                            setSelectedCodeSection("");
+                          }}
+                          className="h-6 px-2 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                        >
+                          Close
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={executeCode}
+                          disabled={!codeEditorContent || isExecutingCode}
+                          className="h-6 px-3 text-xs bg-black text-white dark:bg-white dark:text-black"
+                        >
+                          {isExecutingCode ? "Running..." : "Run"}
+                        </Button>
+                      </div>
                     </div>
                     <div className="flex-1 min-h-0">
                       <Editor
@@ -3074,9 +3121,9 @@ export function ThreePanelInterface() {
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
-          </ResizablePanel>
+              </ResizablePanel>
+            </>
+          )}
         </ResizablePanelGroup>
       </div>
       {contextPos && contextTarget && (
