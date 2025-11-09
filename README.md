@@ -32,6 +32,7 @@
 > 改编说明：本仓库在原始版本基础上进行了改编与增强，以便更便捷地在本地与远程环境中体验和部署。原始项目与模型来源如下：
 > - 原始代码仓库：[`ruc-datalab/DeepAnalyze`](https://github.com/ruc-datalab/DeepAnalyze)
 > - 开源模型：[`RUC-DataLab/DeepAnalyze-8B`](https://huggingface.co/RUC-DataLab/DeepAnalyze-8B)
+> - 改编者：**复旦大学**（Fudan University）
 >
 > 兼容性：已在 macOS Apple Silicon（M1/M2/M3）上验证可用，支持无需 GPU 的本地快速体验（Mock OpenAI API）以及连接远程推理服务。下方提供简易使用步骤与 Mac 专用指南。
 
