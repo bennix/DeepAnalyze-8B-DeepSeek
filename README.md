@@ -30,9 +30,11 @@
 ## 🎬 Demo Video
 
 <p align="center" width="100%">
-  <video src="./Video.mp4" controls muted style="width: 70%; min-width: 300px; display: block; margin: auto;"></video>
+  <a href="https://youtu.be/64Uzp58xSyo" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.youtube.com/vi/64Uzp58xSyo/hqdefault.jpg" alt="Watch Demo on YouTube" style="width: 70%; min-width: 300px; display: block; margin: auto;">
+  </a>
   <br/>
-  <a href="./Video.mp4">如果无法播放，点击此处下载或直接浏览器打开 Video.mp4</a>
+  <a href="https://youtu.be/64Uzp58xSyo" target="_blank" rel="noopener noreferrer">在 YouTube 观看演示视频（点击打开）</a>
 </p>
 
 
